@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Tài Xỉu</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f2f2f2;
+      padding: 30px;
+    }
+    .game-container {
+      background: white;
+      display: inline-block;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+    .dice {
+      font-size: 2em;
+      margin: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-container">
+    <h2>Game Tài Xỉu</h2>
+    <p>Số dư: <span id="balance">10</span> đô</p>
+    <input type="number" id="bet" placeholder="Số tiền cược" min="1">
+    <br><br>
+    <button onclick="play('Tài')">Tài (11-17)</button>
+    <button onclick="play('Xỉu')">Xỉu (4-10)</button>
+    <p class="dice" id="dice">?</p>
+    <p id="result"></p>
+    <button id="resetBtn" onclick="resetGame()" style="display:none">Chơi lại</button>
+  </div>
+
+  <script>
+    let balance = 10;
+
+    function play(choice) {
+      const bet = parseInt(document.getElementById("bet").value);
+      if (isNaN(bet) || bet <= 0) return alert("Nhập số tiền cược hợp lệ");
+      if (bet > balance) return alert("Không đủ tiền cược");
+
+      const dice1 = randDice();
+      const dice2 = randDice();
+      const dice3 = randDice();
+      const total = dice1 + dice2 + dice3;
+
+      document.getElementById("dice").innerText = `${dice1}, ${dice2}, ${dice3} (Tổng: ${total})`;
+
+      let outcome = (total >= 4 && total <= 10) ? "Xỉu" : (total >= 11 && total <= 17) ? "Tài" : "Hòa";
+
+      if (choice === outcome) {
+        balance += bet;
+        document.getElementById("result").innerText = `Bạn thắng! +${bet} đô`;
+      } else {
+        balance -= bet;
+        document.getElementById("result").innerText = `Bạn thua! -${bet} đô`;
+      }
+
+      document.getElementById("balance").innerText = balance;
+
+      if (balance <= 0) {
+        document.getElementById("result").innerText += "\nBạn đã hết tiền!";
+        document.getElementById("resetBtn").style.display = "inline-block";
+      }
+    }
+
+    function randDice() {
+      return Math.floor(Math.random() * 6) + 1;
+    }
+
+    function resetGame() {
+      balance = 10;
+      document.getElementById("balance").innerText = balance;
+      document.getElementById("dice").innerText = "?";
+      document.getElementById("result").innerText = "";
+      document.getElementById("resetBtn").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
